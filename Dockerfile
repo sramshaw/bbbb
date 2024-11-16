@@ -19,9 +19,9 @@ RUN git checkout 7622b490
 RUN ./bootstrap
 RUN ./configure --enable-local
 RUN make
-COPY ./.config /home/ubuntu/crosstool-ng/.config
+COPY ./ct-ng-defconfig /home/ubuntu/crosstool-ng/.config
 RUN yes "" | ./ct-ng oldconfig
-RUN ./ct-ng build.16
+RUN ./ct-ng build.20
 RUN sudo apt install -y libssl-dev device-tree-compiler swig python3-dev
 RUN echo 'export PATH="$HOME/x-tools/arm-training-linux-uclibcgnueabihf/bin:$PATH"' >> ~/.bash_profile 
 RUN echo 'export CROSS_COMPILE="arm-linux-"'                                        >> ~/.bash_profile

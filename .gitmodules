@@ -1,3 +1,6 @@
 [submodule "modules/u-boot"]
 	path = modules/u-boot
 	url = https://gitlab.denx.de/u-boot/u-boot
+[submodule "modules/linux"]
+	path = modules/linux
+	url = https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux

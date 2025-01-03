@@ -34,25 +34,65 @@
    > d98fd109f8279feabed326ecd98923fa9b7affca modules/linux (v5.15.172)  
  e092e3250270a1016c877da7bdd9384f14b1321e modules/u-boot (v2022.07)
 
-## capture of configurations
+## Trial and error, capture of configurations
 
 - discovering how the kernel needs to be configured to build properly
-  - there is some trial and error
-  - there is the ?GUI tool? (make config?) to allow choices that end up in a config
-  - this is also where saving this config can be done with ?make saveconfig?
+  - see below how to enter a console on the container that has the cross compilation tool installed
+  - there is some trial and error involved to change the config for a good build
+  - example 1: for the cross compiler config,
+    -  use of menuconfig:
+    ```
+    cd /home/ubuntu/crosstool-ng/
+    ./ct-ng menuconfig
+    <make changes as per lab and save>
+    ./ct-ng savedefconfig
+    mv defconfig <bettername for storing>
+
+    ``` 
+      - man page for [ct-ng savedefconfig](https://man.archlinux.org/man/ct-ng.1.en#savedefconfig)
+    - and vice versa to use the stored config
+    ```
+    cd /home/ubuntu/crosstool-ng/
+    mv <bettername for storing> ./.config
+    yes "" | ./ct-ng oldconfig
+
+    ``` 
+  - example 2: for the linux kernel configuration
+    -  use of menuconfig
+    ```
+    cd /home/ubuntu/work/modules/linux/
+    make menuconfig
+    <make changes as per lab and save>
+    make savedefconfig
+    mv defconfig <bettername for storing>
+    ``` 
+    - and vice versa to use the stored config
+    ```
+    cd /home/ubuntu/work/modules/linux/
+    mv <bettername for storing> ./.config
+    yes "" | make oldconfig
+
+    ``` 
+  
+  - practical use of this in this repo
     - here several files saved like this:
       - [uboot-defconfic](./uboot-defconfig)
       - [ct-ng-defconfig](/ct-ng-defconfig)
-    - these files are then reused to rehydrate a full config
+    - these files are then reused to rehydrate a full config 
+- the best way to get a console into the toolchain environment with access to the 2 projects that we could build, u-boot and linux (kernel)
+  - (achieved by using docker from within the following, which maps the ```./modules``` folder to the container's ```/home/ubuntu/work/``` folder )
+  - launch the console using the following script in a vscode terminal: [./lmake_explore_toolchain.sh](./lmake_explore_toolchain.sh) 
+    - you now have access to the 
 
-## how the build works currently
+## How the build works currently
 
-- [lmake_toolchain.sh](./lmake_toolchain.sh) is the way to build the toolchain as a container that stays local with the :sweat_smile:great:sweat_smile: name **bbb_amd:0.14**
-  - this container will be used to build everything else 
-- [lmake_uboot.sh](./lmake_uboot.sh) is using the toolchain to build uboot
+- [lmake_toolchain.sh](./lmake_toolchain.sh) is the way to build the toolchain in a vscode WSL2 terminal as a container image
+  - today it is built as a local only container image with the :sweat_smile:great:sweat_smile: name **bbb_amd:0.14**
+  - this container will then be used to build everything else 
+- [lmake_uboot.sh](./lmake_uboot.sh) is using the toolchain container image to build uboot in a vscode WSL2 terminal
     - the main magic is to tie the scripted build instructions [build_uboot.sh](./build_uboot.sh) to an expected script file ```/home/ubuntu/work/todo.sh``` that the container will run
     - the current repos' files are all available to the container at a folder ```/home/ubuntu/work/``` 
     - the resulting ```u-boot.img``` file is then found at ```./modules/u-boot/```
-- [lmake_linux.sh](./lmake_linux.sh) is using the toolchain to build linux
+- [lmake_linux.sh](./lmake_linux.sh) is using the toolchain container image to build linux in a vscode WSL2 terminal
     - same with [build_linux.sh](./build_linux.sh)
     - the resulting output file ```zimage```  is found at ```./modules/linux/arch/arm/boot/```

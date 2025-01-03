@@ -1,5 +1,10 @@
-FROM ubuntu
-RUN apt update && apt dist-upgrade -y  
+# pull ubuntu:latest as of Jan 3, 2025 via digest
+FROM ubuntu@sha256:80dd3c3b9c6cecb9f1667e9290b3bc61b78c2678c02cbdae5f0fea92cc6734ab 
+RUN apt update
+
+# preventing the distribution update to avoid losing the benefit of the digest above
+# RUN apt dist-upgrade -y
+
 # rsync needed for kernels v5.3+
 # wget needed for ./ct-ng build , as per https://github.com/crosstool-ng/crosstool-ng/issues/1482
 # sudo just in case, as cannot produce the toolchain as root, so need to use user ubuntu
@@ -21,6 +26,7 @@ RUN ./configure --enable-local
 RUN make
 COPY ./ct-ng-defconfig /home/ubuntu/crosstool-ng/.config
 RUN yes "" | ./ct-ng oldconfig
+# build using 20 parallel threads (if CPU is capable)
 RUN ./ct-ng build.20
 RUN sudo apt install -y libssl-dev device-tree-compiler swig python3-dev bc
 RUN echo 'export PATH="$HOME/x-tools/arm-training-linux-uclibcgnueabihf/bin:$PATH"' >> ~/.bash_profile 

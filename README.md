@@ -24,14 +24,14 @@
     - after the fact: ```git submodule update --init --recursive```
   - note also that you can make shallow clones, in our case it is the stable releases of linux that are cloned
   - see the repos linked using command ``` cat .gitmodules ```, the last output was:
-  > [submodule "modules/u-boot"]
-        path = modules/u-boot
-        url = https://gitlab.denx.de/u-boot/u-boot
-[submodule "modules/linux"]
-        path = modules/linux
+  > [submodule "modules/u-boot"]  
+        path = modules/u-boot  
+        url = https://gitlab.denx.de/u-boot/u-boot  
+[submodule "modules/linux"]  
+        path = modules/linux  
         url = https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux
   - see the latest checkout for the submodules using the command ```git submodule status``` , the last output was:
-   > d98fd109f8279feabed326ecd98923fa9b7affca modules/linux (v5.15.172)
+   > d98fd109f8279feabed326ecd98923fa9b7affca modules/linux (v5.15.172)  
  e092e3250270a1016c877da7bdd9384f14b1321e modules/u-boot (v2022.07)
 
 ## capture of configurations
@@ -47,7 +47,7 @@
 
 ## how the build works currently
 
-- [lmake_toolchain.sh](./lmake_toolchain.sh) is the way to build the toolchain as a container that stays local with the :/ great :/ name **bbb_amd:0.14**
+- [lmake_toolchain.sh](./lmake_toolchain.sh) is the way to build the toolchain as a container that stays local with the :sweat_smile:great:sweat_smile: name **bbb_amd:0.14**
   - this container will be used to build everything else 
 - [lmake_uboot.sh](./lmake_uboot.sh) is using the toolchain to build uboot
     - the main magic is to tie the scripted build instructions [build_uboot.sh](./build_uboot.sh) to an expected script file ```/home/ubuntu/work/todo.sh``` that the container will run

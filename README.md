@@ -1,4 +1,4 @@
-# Beagle Black Bone Build: an Experiment in building Embedded Linux as per [bootlin](https://bootlin.com) 's lab
+# Beagle Bone Black Build: an Experiment in building Embedded Linux as per [bootlin](https://bootlin.com) 's lab
 
 ## Basic context
 

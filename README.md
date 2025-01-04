@@ -120,9 +120,9 @@ yes "" | make oldconfig
 
 ``` 
 ### 4.4 In practice, list of defconfig files   
-- [uboot-defconfig](./uboot-defconfig)
-- [linux-defconfig](./linux-defconfig)
-- [ct-ng-defconfig](/ct-ng-defconfig)
+- [defconfigs/uboot-defconfig](./defconfigs/uboot-defconfig)
+- [defconfigs/linux-defconfig](./defconfigs/linux-defconfig)
+- [defconfigs/ct-ng-defconfig](./defconfigs/ct-ng-defconfig)
 
 ## 5. Current build scripts
 ### 5.1 building the cross compilation ARM tool chain
@@ -133,13 +133,13 @@ yes "" | make oldconfig
 ### 5.2 building u-boot
 
 - ```./lmake_uboot.sh``` is using the toolchain container image to build uboot in a vscode WSL2 terminal
-    - the main magic is to map the scripted build instructions [build_uboot.sh](./build_uboot.sh) as an expected script file ```/home/ubuntu/work/todo.sh``` that the container will run
+    - the main magic is to map the scripted build instructions [build_uboot.sh](./scripts_for_container/build_uboot.sh) as an expected script file ```/home/ubuntu/work/todo.sh``` that the container will run
     - the current repos' files are all available to the container at a folder ```/home/ubuntu/work/``` 
     - the resulting ```u-boot.img``` file is then found at ```./modules/u-boot/```
 
 ### 5.3 building a custom linux kernel
 - ```./lmake_linux.sh``` is using the toolchain container image to build linux in a vscode WSL2 terminal
-    - same with [build_linux.sh](./build_linux.sh)
+    - same with [build_linux.sh](./scripts_for_container/build_linux.sh)
     - the resulting output file ```zimage```  is found at ```./modules/linux/arch/arm/boot/```
 
 ### 5.4 building all

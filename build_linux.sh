@@ -1,5 +1,5 @@
 #!/bin/bash
-cp linux-defconfig modules/linux/.config
+cp defconfigs/linux-defconfig modules/linux/.config
 cd modules/linux
 echo PATH=$PATH
 echo ARCH=$ARCH

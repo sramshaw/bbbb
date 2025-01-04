@@ -24,7 +24,7 @@ RUN git checkout 7622b490
 RUN ./bootstrap
 RUN ./configure --enable-local
 RUN make
-COPY ./ct-ng-defconfig /home/ubuntu/crosstool-ng/.config
+COPY ./defconfigs/ct-ng-defconfig /home/ubuntu/crosstool-ng/.config
 RUN yes "" | ./ct-ng oldconfig
 # build using 20 parallel threads (if CPU is capable)
 RUN ./ct-ng build.20

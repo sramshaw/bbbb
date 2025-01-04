@@ -1,5 +1,5 @@
 #!/bin/bash
-cp uboot-defconfig modules/u-boot/.config 
+cp defconfigs/uboot-defconfig modules/u-boot/.config 
 cd modules/u-boot
 echo PATH=$PATH
 echo ARCH=$ARCH

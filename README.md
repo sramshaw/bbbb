@@ -6,9 +6,9 @@
     - [3.1 Installation](#31-installation)
     - [3.2 Pull this repo](#32-pull-this-repo)
   - [4. Builds configurations](#4-builds-configurations)
-    - [4.1 The best way to get a console for manually setting up the build configuration](#41-the-best-way-to-get-a-console-for-manually-setting-up-the-build-configuration)
-    - [4.2 Example 1: for the cross compiler config,](#42-example-1-for-the-cross-compiler-config)
-    - [4.3 Example 2: for the linux kernel configuration](#43-example-2-for-the-linux-kernel-configuration)
+    - [4.1 The best way to get a console in the build environment (aka build container)](#41-the-best-way-to-get-a-console-in-the-build-environment-aka-build-container)
+    - [4.2 Example: the cross compiler config,](#42-example-the-cross-compiler-config)
+    - [4.3 Example: the linux kernel configuration](#43-example-the-linux-kernel-configuration)
     - [4.4 In practice, list of defconfig files](#44-in-practice-list-of-defconfig-files)
   - [5. Current build scripts](#5-current-build-scripts)
     - [5.1 building the cross compilation ARM tool chain](#51-building-the-cross-compilation-arm-tool-chain)
@@ -26,14 +26,13 @@ The idea of this POC around this [beagle bone bootlin lab](https://bootlin.com/d
 First, a docker container image is built that holds the ARM cross compilation toolchain.
 The tools required for building the system modules (u-boot and linux) are for now also included in this container image, but could easily be separated out where both modules could have their own specialized container image based off of the toolchain container image.
 
-Second, for each module targeted, there is a script that runs in WSL2 from within the repo root folder (```lmake_<module name>.sh```), usually from vscode, and creates a short-lived containers combining the toolchain container image with access to the module's repo and a script of how to rehydrate the configuration before launching ```make``` in the module's repo root folder.
-The resulting build output is therefore accessible outside of the container in the module's repo in vscode/WSL2.
+Second, for each module targeted, there is a script that runs in WSL2 from within the repo root folder (```lmake_<module name>.sh```), usually from vscode, and creates a short-lived containers combining the toolchain container image with access to the module's repo and a script rehydrating the build configuration before launching ```make``` in the module's repo root folder.
+The resulting build output is accessible outside of the container in vscode/WSL2 at ```./modules/<module name>```.
 
-As a result there is virtually no installation needed in the WSL2 environment, WSL2 is simply used to map folders into the containers via docker CLI. Note that attempting to use Windows + powershell to run the same docker CLI commands did fail on what I suppose are filesystem related limitations, hence the need for WSL2 to launch the containers.
+There is no installation needed in the WSL2 environment, WSL2 is simply used to map folders into the containers via docker CLI. Note that attempting to use Windows + powershell to run the same docker CLI commands did fail on what I suppose are filesystem related limitations, hence the need for WSL2 to launch the containers.
 Of course the build happens mainly from within a container that relies on docker on top of WSL2, so WSL2 is essential here.
-WSL2 has minimum customization.
 
-Along the way, the setup of configurations before the build is also an unsavory part of business (see menuconfig references in the lab's documentation), better avoided using files rather than manual configuration tools. Hence the use of ```savedefconfig```.
+Along the way, the setup of builds' configurations is also sometimes difficult (see ```menuconfig``` references in the lab's documentation), we will see how to do it manually once and leverage it with possible upgrades using ```savedefconfig``` and ```oldconfig```.
 
 ## 2. Basic context
 
@@ -77,17 +76,19 @@ Along the way, the setup of configurations before the build is also an unsavory 
 
 ## 4. Builds configurations
 
-Trial and error is bound to happen at this stage if following the lab pdf, as it seems some options change over time, and the document does not age well. Hence the need to capture the configuration in a reproducible way.
-Based on all the above, the way to first experiment on the manual menuconfig can be done by entering a console session inside a running container, aiming at saving the config in a short form.
+Trial and error is bound to happen at this stage if following the lab pdf, as it seems some options in menuconfig menus change over time, and the document does not reflect it properly.
+We need a way to first experiment on the manual menuconfig from within the build environment.
 
-### 4.1 The best way to get a console for manually setting up the build configuration
-The easiest way to enter a console session is:
+### 4.1 The best way to get a console in the build environment (aka build container)
+The easiest way to enter a console session in a container based on the toolchain container image is:
 - launch the console using the following script in a vscode terminal: [./lmake_explore_toolchain.sh](./lmake_explore_toolchain.sh) 
+  - you now have access to the crosscompilation toolchain repo, and can enter menuconfig
+    - see the  ```dockerfile``` to find the crosstool-ng repo's folder from the running container's perspective  
   - you now have access to the modules or crosscompilation repos, and can enter menuconfig
     - see the scripts ```scripts_for_container/build_<module name>.sh``` to find the repo's folder from the running container's perspective  
-  - note that the container has access due to folder mapping of host (WSL2) ```./modules``` folder to the container's ```/home/ubuntu/work/modules/``` folder
+    - note that the container has access due to folder mapping of host (WSL2) ```./modules``` folder to the container's ```/home/ubuntu/work/modules/``` folder
 
-### 4.2 Example 1: for the cross compiler config,
+### 4.2 Example: the cross compiler config,
 -  use of menuconfig:
 ```
 cd /home/ubuntu/crosstool-ng/
@@ -103,7 +104,7 @@ cd /home/ubuntu/crosstool-ng/
 mv <bettername for storing> ./.config
 yes "" | ./ct-ng oldconfig
 ``` 
-### 4.3 Example 2: for the linux kernel configuration
+### 4.3 Example: the linux kernel configuration
 -  use of menuconfig
 ```
 cd /home/ubuntu/work/modules/linux/

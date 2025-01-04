@@ -84,8 +84,8 @@ Based on all the above, the way to first experiment on the manual menuconfig can
 The easiest way to enter a console session is:
 - launch the console using the following script in a vscode terminal: [./lmake_explore_toolchain.sh](./lmake_explore_toolchain.sh) 
   - you now have access to the modules or crosscompilation repos, and can enter menuconfig
-    - see the scripts ```build_<module name>.sh``` to fing the repo's folder inside the running container  
-  - note that the container has access due to folder mapping of host (WSL2) ```./modules``` folder to the container's ```/home/ubuntu/work/``` folder
+    - see the scripts ```scripts_for_container/build_<module name>.sh``` to find the repo's folder from the running container's perspective  
+  - note that the container has access due to folder mapping of host (WSL2) ```./modules``` folder to the container's ```/home/ubuntu/work/modules/``` folder
 
 ### 4.2 Example 1: for the cross compiler config,
 -  use of menuconfig:

@@ -1,6 +1,31 @@
-# Beagle Bone Black Build: an Experiment in building Embedded Linux as per [bootlin](https://bootlin.com) 's lab
 
-## Basic context
+- [Beagle Bone Black Build: minimum dev setup for building Embedded Linux as per bootlin 's lab](#beagle-bone-black-build-minimum-dev-setup-for-building-embedded-linux-as-per-bootlin-s-lab)
+  - [1. Intro](#1-intro)
+  - [2. Basic context](#2-basic-context)
+  - [3. Requirements so far](#3-requirements-so-far)
+  - [4. Trial and error, capture of configurations](#4-trial-and-error-capture-of-configurations)
+  - [5. How the build works currently](#5-how-the-build-works-currently)
+
+
+# Beagle Bone Black Build: minimum dev setup for building Embedded Linux as per [bootlin](https://bootlin.com) 's lab
+
+## 1. Intro
+
+The idea of this POC around this [beagle bone bootlin lab](https://bootlin.com/doc/training/embedded-linux-bbb/embedded-linux-bbb-labs.pdf) is to setup a simple build approach that is light in terms of preparation of the dev machine.
+
+First, a docker container image is built that holds the ARM cross compilation toolchain.
+The tools required for building the system modules (u-boot and linux) are for now also included in this container image, but could easily be separated out where both modules could have their own specialized container image based off of the toolchain container image.
+
+Second, for each module targeted, there is a script that runs in WSL2 from within the repo root folder (lmake_*.sh), usually from vscode, and creates a short-lived containers combining the toolchain container image with access to the module's repo and a script of how to rehydrate the configuration before launching make in the module's repo root folder.
+The resulting build output is therefore accessible outside of the container in the module's repo in vscode/WSL2.
+
+As a result there is virtually no installation needed in the WSL2 environment, WSL2 is simply used to map folders into the containers via docker CLI. Note that attempting to use Windows + powershell to run the same docker CLI commands did fail on what I suppose are filesystem related limitations, hence the need for WSL2 to launch the containers.
+Of course the build happens mainly from within a container that relies on docker on top of WSL2, so WSL2 is essential here.
+WSL2 has minimum customization.
+
+Along the way, the setup of configurations before the build is also an unsavory part of business (see menuconfig references in the lab's documentation), better avoided using files rather than manual configuration tools. Hence the use of ```savedefconfig```.
+
+## 2. Basic context
 
 - based on the documented training from bootlin: [embedded-linux-bbb-labs.pdf](https://bootlin.com/doc/training/embedded-linux-bbb/embedded-linux-bbb-labs.pdf)
 - attempt to translate this document into a simpler experiment that carries the lessons forward to the next engineer going through it
@@ -12,7 +37,7 @@
         - now rehydrated based on ct-ng-defconfig
         - I figured the options by hand, not necesserarily minimal yet
 
-## Requirements so far
+## 3. Requirements so far
 
 - install Docker Desktop on a Windows laptop
 - use docker/WSL2 (aka docker over WSL2) for running vscode
@@ -34,7 +59,7 @@
    > d98fd109f8279feabed326ecd98923fa9b7affca modules/linux (v5.15.172)  
  e092e3250270a1016c877da7bdd9384f14b1321e modules/u-boot (v2022.07)
 
-## Trial and error, capture of configurations
+## 4. Trial and error, capture of configurations
 
 - discovering how the kernel needs to be configured to build properly
   - see below how to enter a console on the container that has the cross compilation tool installed
@@ -84,7 +109,7 @@
   - launch the console using the following script in a vscode terminal: [./lmake_explore_toolchain.sh](./lmake_explore_toolchain.sh) 
     - you now have access to the 
 
-## How the build works currently
+## 5. How the build works currently
 
 - [lmake_toolchain.sh](./lmake_toolchain.sh) is the way to build the toolchain in a vscode WSL2 terminal as a container image
   - today it is built as a local only container image with the :sweat_smile:great:sweat_smile: name **bbb_amd:0.14**

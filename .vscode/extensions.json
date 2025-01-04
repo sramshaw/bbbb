@@ -5,6 +5,7 @@
         "l13rary.l13-diff",
         "ms-vscode-remote.vscode-remote-extensionpack",
         "shd101wyy.markdown-preview-enhanced",
-        "ms-vscode.makefile-tools"
+        "ms-vscode.makefile-tools",
+        "yzhang.markdown-all-in-one"
     ]
 }

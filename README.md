@@ -4,7 +4,7 @@
   - [2. Basic context](#2-basic-context)
   - [3. Installation requirements on the dev machine](#3-installation-requirements-on-the-dev-machine)
     - [3.1 Installation](#31-installation)
-    - [3.2 Pull this repo](#32-pull-this-repo)
+    - [3.2 Clone this repo on WSL2](#32-clone-this-repo-on-wsl2)
   - [4. Builds configurations](#4-builds-configurations)
     - [4.1 The best way to get a console in the build environment (aka build container)](#41-the-best-way-to-get-a-console-in-the-build-environment-aka-build-container)
     - [4.2 Example: the cross compiler config,](#42-example-the-cross-compiler-config)
@@ -50,15 +50,15 @@ Along the way, the setup of builds' configurations is also sometimes difficult (
 
 ### 3.1 Installation
 - install WSL2
-- install Docker Desktop on a Windows laptop
+- install Docker Desktop on a Windows laptop, or directly in WSL2: ```sudo snap install docker ```
 - install vscode
 - install the vscode extension ```ms-vscode-remote.vscode-remote-extensionpack``` , in particular the ```ms-vscode-remote.remote-wsl``` extension will be used to open this repo in WSL
   - use docker/WSL2 (aka docker over WSL2) for opening this repo , + shell scripts
   - in contrast to running from docker/Windows + powershell scripts, which fail for equivalent script content (docker CLI)
 
-### 3.2 Pull this repo
+### 3.2 Clone this repo on WSL2
 
-- pull this repo and be aware of the git submodules to other repositories
+- clone this repo and be aware of the git submodules to other repositories
   - after cloning this repo, rehydrate the submodules if not done during clone
     - preferred: clone and pull submodules at the same time: ```git clone --recurse-submodules -j8 <repo>```
     - after the fact: ```git submodule update --init --recursive```

@@ -9,13 +9,14 @@ __Table of Contents:__
 - [Beagle Bone Black Build: minimum dev setup for Embedded Linux build](#beagle-bone-black-build-minimum-dev-setup-for-embedded-linux-build)
   - [1. What you will find in this demo](#1-what-you-will-find-in-this-demo)
   - [2. Main changes compared to the original bootlin lab](#2-main-changes-compared-to-the-original-bootlin-lab)
-  - [3. Installation requirements on the dev machine](#3-installation-requirements-on-the-dev-machine)
-    - [3.1 Installation](#31-installation)
-    - [3.2 Clone this repo on WSL2](#32-clone-this-repo-on-wsl2)
-  - [4. Builds configurations](#4-builds-configurations)
-    - [4.1 The best way to get a console in the build environment (aka build container)](#41-the-best-way-to-get-a-console-in-the-build-environment-aka-build-container)
-    - [4.2 Example: the cross compiler config,](#42-example-the-cross-compiler-config)
-    - [4.3 Example: the linux kernel configuration](#43-example-the-linux-kernel-configuration)
+  - [3. Minimal dev machine setup](#3-minimal-dev-machine-setup)
+    - [3.1 Tools](#31-tools)
+    - [3.2 Repo (on WSL2)](#32-repo-on-wsl2)
+  - [4. Steps to properly configre the various sub-repos](#4-steps-to-properly-configre-the-various-sub-repos)
+    - [4.1 Enter a console that has the toolchain](#41-enter-a-console-that-has-the-toolchain)
+    - [4.2 Tweak the configurations](#42-tweak-the-configurations)
+    - [4.3 Example: the cross compiler config,](#43-example-the-cross-compiler-config)
+    - [4.4 Example: the linux kernel configuration](#44-example-the-linux-kernel-configuration)
     - [4.4 In practice, list of defconfig files](#44-in-practice-list-of-defconfig-files)
   - [5. Current build scripts](#5-current-build-scripts)
     - [5.1 building the cross compilation ARM tool chain](#51-building-the-cross-compilation-arm-tool-chain)
@@ -50,9 +51,9 @@ Along the way, the setup of builds' configurations is also sometimes difficult (
         - now configs are automatically rehydrated based on ```ct-ng-defconfig``` or ```<module name>-defconfig```
         - I figured the options by hand, not necesserarily minimal yet. IIRC the kernel config was tough for a newbee, one option seemed ever elusive and took 1h to find.
 
-## 3. Installation requirements on the dev machine
+## 3. Minimal dev machine setup
 
-### 3.1 Installation
+### 3.1 Tools
 - install WSL2
 - install Docker Desktop on a Windows laptop, or directly in WSL2: ```sudo snap install docker ```
 - install vscode
@@ -60,7 +61,7 @@ Along the way, the setup of builds' configurations is also sometimes difficult (
   - use docker/WSL2 (aka docker over WSL2) for opening this repo , + shell scripts
   - in contrast to running from docker/Windows + powershell scripts, which fail for equivalent script content (docker CLI)
 
-### 3.2 Clone this repo on WSL2
+### 3.2 Repo (on WSL2)
 
 - clone this repo and be aware of the git submodules to other repositories
   - after cloning this repo, rehydrate the submodules if not done during clone
@@ -78,26 +79,32 @@ Along the way, the setup of builds' configurations is also sometimes difficult (
    > d98fd109f8279feabed326ecd98923fa9b7affca modules/linux (v5.15.172)  
  e092e3250270a1016c877da7bdd9384f14b1321e modules/u-boot (v2022.07)
 
-## 4. Builds configurations
+## 4. Steps to properly configre the various sub-repos
 
-Trial and error is bound to happen at this stage if following the lab pdf, as it seems some options in menuconfig menus change over time, and the document does not reflect it properly.
-We need a way to first experiment on the manual menuconfig from within the build environment.
+It is common to have to configure the builds as the repos can support multiple architectures.
+Trial and error is bound to happen at this stage if following the lab pdf, as versions evolve. The menu are not always straightforward, though the lab makes the objective clear.
+We need a way to experiment with the manual config with menuconfig from within the build environment.
 
-### 4.1 The best way to get a console in the build environment (aka build container)
+### 4.1 Enter a console that has the toolchain
 The easiest way to enter a console session in a container based on the toolchain container image is:
-- launch the console using the following script in a vscode terminal: [./lmake_explore_toolchain.sh](./lmake_explore_toolchain.sh) 
-  - you now have access to the crosscompilation toolchain repo, and can enter menuconfig
-    - see the  ```dockerfile``` to find the crosstool-ng repo's folder from the running container's perspective  
-  - you now have access to the modules or crosscompilation repos, and can enter menuconfig
-    - see the scripts ```scripts_for_container/build_<module name>.sh``` to find the repo's folder from the running container's perspective  
-    - note that the container has access due to folder mapping of host (WSL2) ```./modules``` folder to the container's ```/home/ubuntu/work/modules/``` folder
+- launch the console using the following script in a vscode terminal: ```./lmake_explore_toolchain.sh``` 
 
-### 4.2 Example: the cross compiler config,
+### 4.2 Tweak the configurations
+  - you now have access to the crosscompilation toolchain repo, and its configuration
+    - repo: /home/ubuntu/crosstool-ng/
+    - the  ```dockerfile``` uses the configuration (rehydrated) to build the toolchain 
+  - you now have access to the modules ' repos, and can enter menuconfig to modify their configs
+    - repo: /home/ubuntu/work/modules/linux/
+    - the scripts ```scripts_for_container/build_<module name>.sh``` uses the configuration (once rehydrated) to build the repo  
+    - note that the container has access due to folder mapping of host (WSL2) 's ```./modules``` folder to the container's ```/home/ubuntu/work/modules/``` folder
+
+### 4.3 Example: the cross compiler config,
 -  use of menuconfig:
 ```
 cd /home/ubuntu/crosstool-ng/
 ./ct-ng menuconfig
 <make changes as per lab and save>
+<verify that the expected properties are set in the .config file , if not go back to the menuconfig step>
 ./ct-ng savedefconfig
 mv defconfig <bettername for storing>
 ``` 
@@ -108,12 +115,13 @@ cd /home/ubuntu/crosstool-ng/
 mv <bettername for storing> ./.config
 yes "" | ./ct-ng oldconfig
 ``` 
-### 4.3 Example: the linux kernel configuration
+### 4.4 Example: the linux kernel configuration
 -  use of menuconfig
 ```
 cd /home/ubuntu/work/modules/linux/
 make menuconfig
 <make changes as per lab and save>
+<verify that the expected properties are set in the .config file , if not go back to the menuconfig step>
 make savedefconfig
 mv defconfig <bettername for storing>
 ``` 

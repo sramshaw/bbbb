@@ -1,12 +1,14 @@
 # Beagle Bone Black Build: minimum dev setup for Embedded Linux build
-As per [bootlin](https://bootlin.com) 's lab
+As per [bootlin](https://bootlin.com) 's lab , great job that deserved this little bit of TLC below.
 
-The idea of this POC around the [beagle bone bootlin lab](https://bootlin.com/doc/training/embedded-linux-bbb/embedded-linux-bbb-labs.pdf) is to setup a simple build approach that is light and reproducible on any dev machine, based on the used of docker (no license required).
+The idea of this POC around the [beagle bone bootlin lab](https://bootlin.com/doc/training/embedded-linux-bbb/embedded-linux-bbb-labs.pdf) is to setup a simple build approach that is light and reproducible on any dev machine, based on the use of docker (no license required).
+It is still possible to have an open console on a linux where the toolchain is readily available, though on a temporary container instead of WSL2.
+
 
 __Table of Contents:__
 - [Beagle Bone Black Build: minimum dev setup for Embedded Linux build](#beagle-bone-black-build-minimum-dev-setup-for-embedded-linux-build)
-  - [1. Intro](#1-intro)
-  - [2. Basic context](#2-basic-context)
+  - [1. What you will find in this demo](#1-what-you-will-find-in-this-demo)
+  - [2. Main changes compared to the original bootlin lab](#2-main-changes-compared-to-the-original-bootlin-lab)
   - [3. Installation requirements on the dev machine](#3-installation-requirements-on-the-dev-machine)
     - [3.1 Installation](#31-installation)
     - [3.2 Clone this repo on WSL2](#32-clone-this-repo-on-wsl2)
@@ -22,7 +24,7 @@ __Table of Contents:__
     - [5.4 building all](#54-building-all)
 
 
-## 1. Intro
+## 1. What you will find in this demo
 
 First, a docker container image is built that holds the ARM cross compilation toolchain.
 The tools required for building the system modules (u-boot and linux) are for now also included in this container image, but could easily be separated out where both modules could have their own specialized container image based off of the toolchain container image.
@@ -35,11 +37,12 @@ Of course the build happens mainly from within a container that relies on docker
 
 Along the way, the setup of builds' configurations is also sometimes difficult (see ```menuconfig``` references in the lab's documentation), we will see how to do it manually once and leverage it with possible upgrades using ```savedefconfig``` and ```oldconfig```.
 
-## 2. Basic context
+## 2. Main changes compared to the original [bootlin](https://bootlin.com) lab
 
 - based on the documented training from bootlin: [embedded-linux-bbb-labs.pdf](https://bootlin.com/doc/training/embedded-linux-bbb/embedded-linux-bbb-labs.pdf)
 - attempt to translate this document into a simpler experiment that carries the lessons forward to the next engineer going through it
-    - use ubuntu@sha256:80dd3c3b9c6cecb9f1667e9290b3bc61b78c2678c02cbdae5f0fea92cc6734ab  (digest based pull that guarantees this is always the same)
+    - use of digest for the container used, for reproductibility's  sake 
+      - ubuntu@sha256:80dd3c3b9c6cecb9f1667e9290b3bc61b78c2678c02cbdae5f0fea92cc6734ab
         - it may be best to use a newer ubuntu when using this on a real project
     - use of a crosstool [crosstool-ng](https://github.com/crosstool-ng/crosstool-ng) that gets installed when building the toolchain
         - especially checkout commit 7622b490

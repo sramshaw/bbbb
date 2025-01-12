@@ -1,5 +1,10 @@
+# Beagle Bone Black Build: minimum dev setup for Embedded Linux build
+As per [bootlin](https://bootlin.com) 's lab
 
-- [Beagle Bone Black Build: minimum dev setup for building Embedded Linux as per bootlin 's lab](#beagle-bone-black-build-minimum-dev-setup-for-building-embedded-linux-as-per-bootlin-s-lab)
+The idea of this POC around the [beagle bone bootlin lab](https://bootlin.com/doc/training/embedded-linux-bbb/embedded-linux-bbb-labs.pdf) is to setup a simple build approach that is light and reproducible on any dev machine, based on the used of docker (no license required).
+
+__Table of Contents:__
+- [Beagle Bone Black Build: minimum dev setup for Embedded Linux build](#beagle-bone-black-build-minimum-dev-setup-for-embedded-linux-build)
   - [1. Intro](#1-intro)
   - [2. Basic context](#2-basic-context)
   - [3. Installation requirements on the dev machine](#3-installation-requirements-on-the-dev-machine)
@@ -17,11 +22,7 @@
     - [5.4 building all](#54-building-all)
 
 
-# Beagle Bone Black Build: minimum dev setup for building Embedded Linux as per [bootlin](https://bootlin.com) 's lab
-
 ## 1. Intro
-
-The idea of this POC around this [beagle bone bootlin lab](https://bootlin.com/doc/training/embedded-linux-bbb/embedded-linux-bbb-labs.pdf) is to setup a simple build approach that is light in terms of preparation of the dev machine.
 
 First, a docker container image is built that holds the ARM cross compilation toolchain.
 The tools required for building the system modules (u-boot and linux) are for now also included in this container image, but could easily be separated out where both modules could have their own specialized container image based off of the toolchain container image.
